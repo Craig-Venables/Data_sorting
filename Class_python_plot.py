@@ -47,20 +47,27 @@ class plot_python_single_sweep():
         self.np_materials = np_materials
         # fix these names
 
-
-    def plot(self):
+    def main_plot(self):
         '''
             plots iv and log iv graphs as subplots in its own window
             '''
 
-        fig = plt.figure(figsize=(15, 6))
+        fig = plt.figure(figsize=(12, 8))
 
-        # using the functions plot the graphs
-        plt.subplot(1, 2, 1)
+        # using the functions main_plot the graphs
+        plt.subplot(2, 2, 1)
         self.plot_iv()
 
-        plt.subplot(1, 2, 2)
+        plt.subplot(2, 2, 2)
         self.plot_logiv()
+
+        plt.subplot(2, 2, 3)
+        self.plot_iv_avg()
+
+        plt.subplot(2, 2, 4)
+        self.information()
+
+
         plt.ioff()
 
 
@@ -74,58 +81,24 @@ class plot_python_single_sweep():
         plt.pause(0.01)
 
     # Functions for plotting the graphs
+
     def plot_iv(self):
         """
-            Plots voltage against current using Matplotlib.
+                    Plots voltage against abs current using Matplotlib.
 
-            Parameters:
-            - voltage_data (list): List of voltage data points.
-            - current_data (list): List of current data points.
-            """
-        # Calculate the length of the data
-        data_len = len(self.v_data)
-        # Determine the quarter length
-        quarter_len = data_len // 4
-
-        # Create a list of colors for each data point
-        colors = []
-        labels = []
-
-        for i in range(data_len):
-            if i < quarter_len:
-                colors.append('r')  # Red for the first quarter
-            elif i < 2 * quarter_len:
-                colors.append('b')  # Blue for the second quarter
-            elif i < 3 * quarter_len:
-                colors.append('g')  # Green for the third quarter
-            else:
-                colors.append('c')  # Cyan for the fourth quarter
-
-        #plt.scatter(self.v_data, self.c_data, c=colors, marker='o')
-        # Plot the IV curve with colored points for each quarter
-        plt.scatter(self.v_data[:quarter_len], self.c_data[:quarter_len], c='r', marker='o', label='Q1', s=10)
-        plt.scatter(self.v_data[quarter_len:2*quarter_len], self.c_data[quarter_len:2*quarter_len], c='b', marker='o', label='Q2',s=10)
-        plt.scatter(self.v_data[2*quarter_len:3*quarter_len], self.c_data[2*quarter_len:3*quarter_len], c='g', marker='o', label='Q3',s=10)
-        plt.scatter(self.v_data[3*quarter_len:], self.c_data[3*quarter_len:], c='c', marker='o', label='Q4',s=10)
-
-        plt.legend()
+                    Parameters:
+                    - voltage_data (list): List of voltage data points.
+                    - abs_current_data (list): List of current data points.
+                    """
+        # Create a scatter main_plot of voltage against current
+        plt.plot(self.v_data, self.c_data, color='blue')
 
         # Add labels and a title
         plt.ylabel('Current')
+        #plt.yscale("log")
         plt.xlabel('Voltage')
         plt.title('Voltage vs. Current Graph')
 
-        section_length = len(self.v_data) // 10
-        for i in range(10):
-            start_idx = i * section_length
-            end_idx = (i + 1) * section_length
-            plt.arrow(self.v_data[end_idx - 1], self.c_data[end_idx - 1],
-                      self.v_data[end_idx] - self.v_data[end_idx - 1],
-                      self.c_data[end_idx] - self.c_data[end_idx - 1],
-                      width=0.00000001, head_width=0.0000001, head_length=0.01, fc='red', ec='red')
-        #length_includes_head = True)
-        # Show the plot
-        #plt.show()
 
     def plot_logiv(self):
         """
@@ -135,7 +108,7 @@ class plot_python_single_sweep():
             - voltage_data (list): List of voltage data points.
             - abs_current_data (list): List of current data points.
             """
-        # Create a scatter plot of voltage against current
+        # Create a scatter main_plot of voltage against current
         plt.plot(self.v_data, self.abs_c_data, color='blue')
 
         # Add labels and a title
@@ -146,73 +119,98 @@ class plot_python_single_sweep():
         # plt.title('Voltage vs. abs_Current Graph' + \
         #           '\n' + f'{self.device_name}' + ' ' + f'{self.section_name}' + ' ' + f'{self.filename}')
 
-        # Show the plot
+        # Show the main_plot
         #plt.show()
 
-
-    def plot_extrema(self):
-
+    def plot_iv_avg(self, num_points=20, ax=None):
         #plt.figure(figsize=(8, 6))
 
         # Calculate the length of the data
         data_len = len(self.v_data)
 
-        # Determine the quarter length
-        quarter_len = data_len // 4
+        # Determine the step size for averaging
+        step_size = data_len // num_points
 
-        # Create a list of colors for each data point
-        colors = []
-        labels = []
+        # Initialize lists to store averaged data
+        avg_v_data = []
+        avg_c_data = []
 
-        for i in range(data_len):
-            if i < quarter_len:
-                colors.append('r')  # Red for the first quarter
-            elif i < 2 * quarter_len:
-                colors.append('b')  # Blue for the second quarter
-            elif i < 3 * quarter_len:
-                colors.append('g')  # Green for the third quarter
-            else:
-                colors.append('c')  # Cyan for the fourth quarter
+        # Calculate the averages
+        for i in range(0, data_len, step_size):
+            avg_v = np.mean(self.v_data[i:i + step_size])
+            avg_c = np.mean(self.c_data[i:i + step_size])
+            avg_v_data.append(avg_v)
+            avg_c_data.append(avg_c)
 
-        #plt.scatter(self.v_data, self.c_data, c=colors, marker='o')
-        # Plot the IV curve with colored points for each quarter
-        plt.scatter(self.v_data[:quarter_len], self.c_data[:quarter_len], c='r', marker='o', label='Q1', s=10)
-        plt.scatter(self.v_data[quarter_len:2*quarter_len], self.c_data[quarter_len:2*quarter_len], c='b', marker='o', label='Q2',s=10)
-        plt.scatter(self.v_data[2*quarter_len:3*quarter_len], self.c_data[2*quarter_len:3*quarter_len], c='g', marker='o', label='Q3',s=10)
-        plt.scatter(self.v_data[3*quarter_len:], self.c_data[3*quarter_len:], c='c', marker='o', label='Q4',s=10)
+        # Plot the IV curve with smaller, colored points for averaged data
+        plt.scatter(avg_v_data, avg_c_data, c='b', marker='o', label='Averaged Data', s=10)
 
+        # Add arrows between data points
+        for i in range(1, len(avg_v_data)):
+            plt.annotate('', xy=(avg_v_data[i], avg_c_data[i]), xytext=(avg_v_data[i - 1], avg_c_data[i - 1]),
+                         arrowprops=dict(arrowstyle='->', color='red'))
+
+        # Customize labels and title
+        plt.xlabel('Voltage (V)')
+        plt.ylabel('Current (A)')
+        plt.title(f'Averaged Data Showing {num_points} Data points with Arrows indicating direction')
         plt.legend()
+        plt.grid(True)
+
+    def information(self):
+        '''
+        Add text information to the final section of the subplot.
+
+        '''
+
+        text = f' ON/OFF ratio = {self.on_off_ratio} \n'\
+               f'{self.section_name,self.device_number,self.filename} \n' \
+               'add more information about device here,\n' \
+               ' or new graph'
+        # Create a subplot for information
+        plt.subplot(2, 2, 4)
+
+        # Clear any existing content in the subplot
+        plt.cla()
+
+        # # Add the text to the subplot
+        # plt.text(0.5, 0.5, text, ha='center', va='center', fontsize=12)
+
+        # Add the text to the subplot without a frame
+        #plt.text(0.5, 0.5, text, ha='center', va='center', fontsize=12, bbox=dict(facecolor='none', edgecolor='none'))
+        plt.text(0.5, 0.5, text, ha='center', va='center', fontsize=12, bbox=None)
+
+        # Remove axis ticks and labels
+        plt.xticks([])
+        plt.yticks([])
+
+        # Adjust the subplot layout
+        plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1)
 
 
-        # # Plot the IV curve with colored points for each quarter
-        # plt.scatter(self.v_data[:quarter_len], self.c_data[:quarter_len], c='r', marker='o', label='Q1')
-        # plt.scatter(self.v_data[quarter_len:2*quarter_len], self.c_data[quarter_len:2*quarter_len], c='b', marker='o', label='Q2')
-        # plt.scatter(self.v_data[2*quarter_len:3*quarter_len], self.c_data[2*quarter_len:3*quarter_len], c='g', marker='o', label='Q3')
-        # plt.scatter(self.v_data[3*quarter_len:], self.c_data[3*quarter_len:], c='c', marker='o', label='Q4')
+
+
+        # # Plot some data (optional)
+        # # x = [1, 2, 3, 4, 5]
+        # # y = [10, 8, 6, 4, 2]
+        # #plt.figure()
+        # #plt.plot(x,y)
         #
-        # # Customize labels and title
-        # plt.xlabel('Voltage (V)')
-        # plt.ylabel('Current (A)')
-        # plt.title('IV Curve of Memristor with Quarter-Based Color Mapping')
-
+        # # Add text directly to the plot
+        # text_x = 2  # X-coordinate for the text
+        # text_y = 8  # Y-coordinate for the text
+        #
+        # text = "This is some additional information."
+        #
+        # plt.text(text_x, text_y, text, fontsize=12, color='blue')
+        #
+        # # Customize labels and title (optional)
+        # plt.xlabel('X-axis')
+        # plt.ylabel('Y-axis')
+        # plt.title('Plot with Additional Text')
 
         # Show the plot
         #plt.grid(True)
-        #plt.show()
-
-
-        # max_voltage, max_voltage_value, max_current, max_current_value, \
-        # min_voltage, min_voltage_value, min_current, min_current_value = self.find_extrema()
-        #
-        # plt.scatter([max_voltage, min_voltage], [max_current, min_current], color='red', marker='o', label='Extrema')
-        # plt.xlabel('Voltage')
-        # plt.ylabel('Current')
-        # plt.title('Extreme Current-Voltage Points')
-        # plt.legend()
-        #
-        # print(f"Max Voltage: {max_voltage}, Associated Current: {max_current_value}")
-        # print(f"Min Voltage: {min_voltage}, Associated Current: {min_current_value}")
-
 
     # statistics for the whole device
     # def make_hist(self, data_in, x_label, ax):
@@ -243,3 +241,59 @@ class plot_python_single_sweep():
     #                              file_info.voltage_on_value, file_info.voltage_off_value,
     #                              file_info.filename, section_name, device_name, device_number, full_path,
     #                              file_info.on_off_ratio)
+
+
+    #plots an iv graph with segments
+
+    # def plot_iv(self):
+    #     """
+    #         Plots voltage against current using Matplotlib.
+    #
+    #         Parameters:
+    #         - voltage_data (list): List of voltage data points.
+    #         - current_data (list): List of current data points.
+    #         """
+    #     # Calculate the length of the data
+    #     data_len = len(self.v_data)
+    #     # Determine the quarter length
+    #     quarter_len = data_len // 4
+    #
+    #     # Create a list of colors for each data point
+    #     colors = []
+    #     labels = []
+    #
+    #     for i in range(data_len):
+    #         if i < quarter_len:
+    #             colors.append('r')  # Red for the first quarter
+    #         elif i < 2 * quarter_len:
+    #             colors.append('b')  # Blue for the second quarter
+    #         elif i < 3 * quarter_len:
+    #             colors.append('g')  # Green for the third quarter
+    #         else:
+    #             colors.append('c')  # Cyan for the fourth quarter
+    #
+    #     #plt.scatter(self.v_data, self.c_data, c=colors, marker='o')
+    #     # Plot the IV curve with colored points for each quarter
+    #     plt.scatter(self.v_data[:quarter_len], self.c_data[:quarter_len], c='r', marker='o', label='Q1', s=10)
+    #     plt.scatter(self.v_data[quarter_len:2*quarter_len], self.c_data[quarter_len:2*quarter_len], c='b', marker='o', label='Q2',s=10)
+    #     plt.scatter(self.v_data[2*quarter_len:3*quarter_len], self.c_data[2*quarter_len:3*quarter_len], c='g', marker='o', label='Q3',s=10)
+    #     plt.scatter(self.v_data[3*quarter_len:], self.c_data[3*quarter_len:], c='c', marker='o', label='Q4',s=10)
+    #
+    #     plt.legend()
+    #
+    #     # Add labels and a title
+    #     plt.ylabel('Current')
+    #     plt.xlabel('Voltage')
+    #     plt.title('Voltage vs. Current Graph')
+    #
+    #     section_length = len(self.v_data) // 10
+    #     for i in range(10):
+    #         start_idx = i * section_length
+    #         end_idx = (i + 1) * section_length
+    #         plt.arrow(self.v_data[end_idx - 1], self.c_data[end_idx - 1],
+    #                   self.v_data[end_idx] - self.v_data[end_idx - 1],
+    #                   self.c_data[end_idx] - self.c_data[end_idx - 1],
+    #                   width=0.00000001, head_width=0.0000001, head_length=0.01, fc='red', ec='red')
+    #     #length_includes_head = True)
+    #     # Show the main_plot
+    #     #plt.show()

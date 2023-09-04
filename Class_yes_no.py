@@ -41,9 +41,9 @@ class yes_no():
         self.save_data = save_data
 
         self.output_folder = (
-            r'C:\Users\Craig-Desktop\OneDrive - The University of Nottingham\Documents\Phd\1) Projects\1) Memristors')
+            r'C:\Users\Craig-Desktop\OneDrive - The University of Nottingham\Documents\Phd\1) Projects\1) Memristors\1) Curated Data')
         self.checked_files_path = (
-            r'C:\Users\Craig-Desktop\OneDrive - The University of Nottingham\Documents\Phd\1) Projects\1) Memristors\checked_files.txt')
+            r'C:\Users\Craig-Desktop\OneDrive - The University of Nottingham\Documents\Phd\1) Projects\1) Memristors\1) Curated Data\checked_files.txt')
 
         self.yes_no_to_data()
 
@@ -57,8 +57,8 @@ class yes_no():
             print(f"Folder already exists: {folder_path}")
 
     def yes_no_to_data(self):
-
-        print('Filename: ', self.filename)
+        #print(self.on_off_ratio)
+        #print('Filename: ', self.filename)
 
         checked_files = self.load_checked_files()
         name_in_checked_files = f"{self.np_material_or_stock} - " + f"{self.polymer_name} - " + f"{self.device_name} - " + f"{self.section_name} - " + f"{self.device_number} - " + f"{self.filename} - "
@@ -80,6 +80,7 @@ class yes_no():
 
                 # terrible way of doing this but plots the graphs using the class plot_python_single
                 a = cpp.plot_python_single_sweep(self.v_data, self.c_data, self.abs_c_data)
+
                 a.on_off_ratio = self.on_off_ratio
                 a.filename = self.filename
                 a.section_name = self.section_name
@@ -87,7 +88,7 @@ class yes_no():
                 a.polymer_name = self.polymer_name
                 a.device_number = self.device_number
                 a.np_materials = self.np_material_or_stock
-                a.plot()
+                a.main_plot()
 
                 print("Do you want to copy this file? (y/n): ")
                 event = keyboard.read_event(suppress=True)

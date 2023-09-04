@@ -50,9 +50,6 @@ class Single_sweep_info:
 
         self.v_data, self.c_data = self.split_iv_sweep()
 
-
-
-
         self.v_data_ps, self.c_data_ps = self.filter_positive_values()
         self.v_data_ng, self.c_data_ng = self.filter_negative_values()
 
@@ -70,40 +67,35 @@ class Single_sweep_info:
         self.log_resistance = self.log_resistance()
         self.abs_current = absolute_val(self.c_data)
 
-
-        #self.yes_and_no_sort()
-
-
+        # self.yes_and_no_sort()
 
         # makes a time array that is evenly spread out for the data, from t=0 to t=length of your experiment
         self.time = np.linspace(0, 33, len(self.v_data))
 
         # for statistics on the device
         self.resistance_on_value, self.resistance_off_value, self.voltage_on_value, self.voltage_off_value = self.statistics()
-        if self.resistance_off_value or self.resistance_on_value == 0:
-            self.on_off_ratio = 0
-        else:
-            self.on_off_ratio = self.resistance_off_value / self.resistance_on_value
+
+        # checks for divide by zero error!
+        self.on_off_ratio = self.weird_division(self.resistance_off_value, self.resistance_on_value)
 
         # data for saving in a text file for later use
         self.save_data()
 
         # print (self.on_off_ratio)
 
+    def weird_division(self, n, d):
+        return n / d if d else 0
+
     def save_data(self):
-        # data = "voltage\tcurrent\tabs_current\tresistance\tlog_resistance\tabs_current\tcurrent_density_ps" \
-        #        "\tcurrent_density_ng\telectric_field_ps\telectric_field_ng\tcurrent_over_voltage_ps" \
-        #        "\tcurrent_over_voltage_ng\tvoltage_to_the_half_ps\tvoltage_to_the_half_ng\n"
         data = list(zip(self.v_data, self.c_data, self.abs_current, self.resistance, self.log_resistance,
                         self.current_density_ps, self.current_density_ng, self.electric_field_ps,
-                        self.electric_field_ng,self.current_over_voltage_ps, self.current_over_voltage_ng, self.voltage_to_the_half_ps,
+                        self.electric_field_ng, self.current_over_voltage_ps, self.current_over_voltage_ng,
+                        self.voltage_to_the_half_ps,
                         self.voltage_to_the_half_ng))
         header = "voltage", "current", "abs_current", "resistance", "log_resistance", "abs_current", "current_density_ps" \
             , "current_density_ng", "electric_field_ps", "electric_field_ng", "current_over_voltage_ps", \
             "current_over_voltage_ng", "voltage_to_the_half_ps", "voltage_to_the_half_ng"
         formatted_data = ""
-
-        #formatted_data += "\t".join(header) + "\n"
 
         # Set the column width for formatting
         column_width = 15
@@ -115,14 +107,14 @@ class Single_sweep_info:
         formatted_header = "\t".join(item.ljust(column_width) for item in header)
         formatted_data += formatted_header + "\n"
 
-
         # Iterate through each row and format the data
+
         for row in data:
             rounded_row = [round(item, significant_figures) for item in row]
             formatted_row = "\t".join(str(item).ljust(column_width) for item in rounded_row)
             formatted_data += formatted_row + "\n"
 
-            #self.save_data = formatted_data
+            # self.save_data = formatted_data
         return formatted_data
 
     def filereader(self):
@@ -272,7 +264,7 @@ class Single_sweep_info:
         # voltage and current magnitude
         voltage_mag = []
         current_mag = []
-        if not len(self.v_data) <10:
+        if not len(self.v_data) < 10:
             for value in range(len(self.v_data)):
                 if -thresh < self.v_data[value] < thresh:
                     voltage_mag.append(self.v_data[value])
@@ -283,15 +275,14 @@ class Single_sweep_info:
                 if voltage_mag[j] != 0:
                     res_mag.append(voltage_mag[j] / current_mag[j])
 
-            print (len(self.v_data))
 
-            if not len(self.v_data) <10:
+            if not len(self.v_data) < 10:
                 roff = min(res_mag)
                 ron = max(res_mag)
             else:
                 roff = 0
                 ron = 0
-            # print(ron)
+
 
             resistance_off_value = roff
             resistance_on_value = ron
@@ -315,7 +306,7 @@ class Single_sweep_info:
             voltage_on_value = voltage_on
             voltage_off_value = voltage_off
         else:
-            return 0,0,0,0
+            return 0, 0, 0, 0
 
         # print (resistance_on_value, resistance_off_value, voltage_on_value , voltage_off_value)
         return resistance_on_value, resistance_off_value, voltage_on_value, voltage_off_value

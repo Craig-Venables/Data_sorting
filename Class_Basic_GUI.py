@@ -46,7 +46,7 @@ class SimpleGUI:
         x = [1, 2, 3, 4, 5]
         y = [x_val**2 for x_val in x]
         self.ax.clear()
-        self.ax.plot(x, y)
+        self.ax.main_plot(x, y)
         self.ax.set_xlabel("X")
         self.ax.set_ylabel("Y")
         self.ax.set_title("Simple Matplotlib Graph")

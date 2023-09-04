@@ -90,66 +90,61 @@ class Device_info():
         self.file_list = os.listdir(self.directory_path)
 
     def yes_and_no_sort(self):
-        # print ("starting folder -",self.directory_path)
-        # print ('list length @ start',len(self.file_list))
-        # print ('list of files - ',self.file_list)
 
         for filename in self.file_list:
             print("Processing:", filename)
-            #try:
-            if not any(filename.endswith(ext) for ext in ignore_files):
-                if os.path.isfile(os.path.join(self.directory_path, filename)):
-                    if check_for_no_data(os.path.join(self.directory_path, filename)) is None:
-                        print(f"{filename} device has no data")
-                        print("")
+            try:
+                if not any(filename.endswith(ext) for ext in ignore_files):
+                    if os.path.isfile(os.path.join(self.directory_path, filename)):
+                        if check_for_no_data(os.path.join(self.directory_path, filename)) is None:
+                            print(f"{filename} device has no data")
+                            print("")
 
-                        # self.get_file_names(self.directory_path)
+                            # self.get_file_names(self.directory_path)
 
-                        # Extract folder names from the full path
-                        folder_names = os.path.dirname(self.directory_path)
-                        # extract parent folder name i.e section name
-                        parent_folder_name = os.path.basename(os.path.dirname(self.directory_path))
-                        device_number = parent_folder_name
-                        # extract grandparent folder name i.e device name
-                        grandparent_folder_name = os.path.basename(
-                            os.path.dirname(os.path.dirname(self.directory_path)))
-                        section_name = grandparent_folder_name
-                        # extract great-grandparent name ie polymer
-                        great_grandparent_folder_name = os.path.basename(
-                            os.path.dirname(os.path.dirname(os.path.dirname(self.directory_path))))
-                        device_name = great_grandparent_folder_name
-                        great_great_grandparent_folder_name = os.path.basename(os.path.dirname(
-                            os.path.dirname(os.path.dirname(os.path.dirname(self.directory_path)))))
-                        polymer_name = great_great_grandparent_folder_name
-                        great_great_great_grandparent_folder_name = os.path.basename(
-                            os.path.dirname(os.path.dirname(
-                                os.path.dirname(os.path.dirname(os.path.dirname(self.directory_path))))))
-                        np_material_or_stock = great_great_great_grandparent_folder_name
+                            # Extract folder names from the full path
+                            folder_names = os.path.dirname(self.directory_path)
+                            # extract parent folder name i.e section name
+                            parent_folder_name = os.path.basename(os.path.dirname(self.directory_path))
+                            device_number = parent_folder_name
+                            # extract grandparent folder name i.e device name
+                            grandparent_folder_name = os.path.basename(
+                                os.path.dirname(os.path.dirname(self.directory_path)))
+                            section_name = grandparent_folder_name
+                            # extract great-grandparent name ie polymer
+                            great_grandparent_folder_name = os.path.basename(
+                                os.path.dirname(os.path.dirname(os.path.dirname(self.directory_path))))
+                            device_name = great_grandparent_folder_name
+                            great_great_grandparent_folder_name = os.path.basename(os.path.dirname(
+                                os.path.dirname(os.path.dirname(os.path.dirname(self.directory_path)))))
+                            polymer_name = great_great_grandparent_folder_name
+                            great_great_great_grandparent_folder_name = os.path.basename(
+                                os.path.dirname(os.path.dirname(
+                                    os.path.dirname(os.path.dirname(os.path.dirname(self.directory_path))))))
+                            np_material_or_stock = great_great_great_grandparent_folder_name
 
-                        cyn.yes_no(1000, filename=filename, device_number=device_number, section_name=section_name,
-                                   device_name=device_name, polymer_name=polymer_name,
-                                   np_material_or_stock=np_material_or_stock, full_path=self.directory_path)
+                            cyn.yes_no(1000, filename=filename, device_number=device_number, section_name=section_name,
+                                       device_name=device_name, polymer_name=polymer_name,
+                                       np_material_or_stock=np_material_or_stock, full_path=self.directory_path)
 
-                    # for normal devices with data
-                    v_data, c_data, abs_c_data, current_density_ps, current_density_ng, \
-                        electric_field_ps, electric_field_ng, current_over_voltage_ps, \
-                        current_over_voltage_ng, voltage_to_the_half_ps, voltage_to_the_half_ng, \
-                        resistance_on_value, resistance_off_value, voltage_on_value, voltage_off_value, resistance, \
-                        log_resistance, times, on_off_ratio, filename, device_number, section_name, device_name, \
-                        polymer_name, np_material_or_stock, full_path, save_data = self.pull_into_for_single_sweep(
-                        filename)
+                        # for normal devices with data
+                        v_data, c_data, abs_c_data, current_density_ps, current_density_ng, \
+                            electric_field_ps, electric_field_ng, current_over_voltage_ps, \
+                            current_over_voltage_ng, voltage_to_the_half_ps, voltage_to_the_half_ng, \
+                            resistance_on_value, resistance_off_value, voltage_on_value, voltage_off_value, resistance, \
+                            log_resistance, times, on_off_ratio, filename, device_number, section_name, device_name, \
+                            polymer_name, np_material_or_stock, full_path, save_data = self.pull_into_for_single_sweep(
+                            filename)
 
-                    print("before the yes no class")
 
-                    cyn.yes_no(v_data, c_data, abs_c_data, resistance_on_value, resistance_off_value,
-                               voltage_on_value, voltage_off_value, resistance, log_resistance, times,
-                               on_off_ratio, filename, device_number, section_name, device_name, polymer_name,
-                               np_material_or_stock, full_path, save_data)
-                    print("after yes no class thing")
+                        cyn.yes_no(v_data, c_data, abs_c_data, resistance_on_value, resistance_off_value,
+                                   voltage_on_value, voltage_off_value, resistance, log_resistance, times,
+                                   on_off_ratio, filename, device_number, section_name, device_name, polymer_name,
+                                   np_material_or_stock, full_path, save_data)
 
-            #except Exception as e:
-                #print("it broke")
-                #print(f"Error processing {filename}: {e}")
+            except Exception as e:
+                print("it broke")
+                print(f"Error processing {filename}: {e}")
 
     def pull_info_for_folder(self, filename):
         for filename in self.file_list:
