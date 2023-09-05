@@ -1,21 +1,9 @@
 import os
-import shutil
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.stats import zscore
 import Class_device as cd
-import Class_single_sweep as css
-from Class_Basic_GUI import SimpleGUI
-import tkinter as tk
-import threading
-
-#C:\Users\Craig-Desktop\Desktop\yes_and_no_sort file fot data sorting\origional data location
-directory_path = (r'C:\Users\Craig-Desktop\OneDrive - The University of Nottingham\Documents\Phd\2) Data\1) Devices\1) Memristors')
-
-#output_folder = (r'C:\Users\Craig-Desktop\Desktop\test folder\memristors - projects')
 
 
-
+directory_path = (
+    r'C:\Users\Craig-Desktop\OneDrive - The University of Nottingham\Documents\Phd\2) Data\1) Devices\1) Memristors')
 
 def process_directories(directory_path):
     # List of folder names to skip
@@ -25,7 +13,6 @@ def process_directories(directory_path):
     for root, dirs, _ in os.walk(directory_path):
         # Create a copy of the list of directories to avoid modifying it while iterating
         dirs_copy = dirs.copy()
-        #print(dirs_copy)
         for d in dirs_copy:
             directory_path = os.path.join(root, d)
 
@@ -34,15 +21,19 @@ def process_directories(directory_path):
                 dirs.remove(d)
             else:
                 dir_contents = os.listdir(directory_path)
+                print ("Main",dir_contents)
                 if any(os.path.isfile(os.path.join(directory_path, item)) for item in dir_contents):
                     # Perform your desired action on the directory here
-                    #check_for_no_data (directory_path)
+                    # check_for_no_data (directory_path)
                     print(directory_path)
 
-                    # Collects all the device info and data
+                    # Calls the class "Class_device" to gain the info from the device
                     di = cd.Device_info(directory_path)
-                    #
+                    # Calls the yes and no sort to sort the data
+                    # this also calls the yes_no class and the python plot class
                     di.yes_and_no_sort()
+                    #di.pull_info_for_folder()
+                    #print(di.v_data_array)
 
                 else:
                     # Handle the case where there are no files in the directory
@@ -51,7 +42,4 @@ def process_directories(directory_path):
 
 
 process_directories(directory_path)
-
-
-print ('finished')
-
+print('finished')

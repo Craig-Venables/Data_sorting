@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 class plot_python_single_sweep():
     ''' for plotting graphs in python
 
@@ -14,12 +15,13 @@ class plot_python_single_sweep():
     voltage_to_the_half_ng = | type: array
     '''
 
-    def __init__(self,v_data,c_data, abs_c_data,current_density_ps='', current_density_ng='',
-                 electric_field_ps='',electric_field_ng='', current_over_voltage_ps='', current_over_voltage_ng='',
-                 voltage_to_the_half_ps='',voltage_to_the_half_ng='', resistance_on_value='',resistance_off_value='',
-                 voltage_on_value='',voltage_off_value='', filename='', device_number = '', section_name='',device_name='',
-                 polymer_name='',np_materials='',full_path='',
-                 on_off_ratio='')-> None:
+    def __init__(self, v_data, c_data, abs_c_data, current_density_ps='', current_density_ng='',
+                 electric_field_ps='', electric_field_ng='', current_over_voltage_ps='', current_over_voltage_ng='',
+                 voltage_to_the_half_ps='', voltage_to_the_half_ng='', resistance_on_value='', resistance_off_value='',
+                 voltage_on_value='', voltage_off_value='', filename='', device_number='', section_name='',
+                 device_name='',
+                 polymer_name='', np_materials='', full_path='',
+                 on_off_ratio='') -> None:
 
         # data parsed through from instance class was ran
         self.v_data = v_data
@@ -43,16 +45,17 @@ class plot_python_single_sweep():
         self.device_name = device_name
         self.device_number = device_number
         self.full_path = full_path
-        self.polymer_name=polymer_name
+        self.polymer_name = polymer_name
         self.np_materials = np_materials
+        self.fig = None
         # fix these names
 
     def main_plot(self):
         '''
             plots iv and log iv graphs as subplots in its own window
             '''
-
-        fig = plt.figure(figsize=(12, 8))
+        plt.close('all')
+        self.fig = plt.figure(figsize=(12, 8))
 
         # using the functions main_plot the graphs
         plt.subplot(2, 2, 1)
@@ -67,20 +70,17 @@ class plot_python_single_sweep():
         plt.subplot(2, 2, 4)
         self.information()
 
-
         plt.ioff()
 
-
         # add subplot title
-        plt.suptitle(f'{self.polymer_name} -' +f'{self.device_name} -' + ' ' + f'{self.section_name} -' + ' ' + f'{self.filename}')
+        plt.suptitle(
+            f'{self.polymer_name} -' + f'{self.device_name} -' + ' ' + f'{self.section_name} -' + ' ' + f'{self.filename}')
 
         # add label underneath plots for on-off ratio
-        fig.text(0.5, 0.01, " ON/OFF Ratio @0.2v - " + f'{round(self.on_off_ratio,4)}', ha='center', fontsize=10)
+        self.fig.text(0.5, 0.01, " ON/OFF Ratio @0.2v - " + f'{round(self.on_off_ratio, 4)}', ha='center', fontsize=10)
         plt.pause(0.01)
         plt.show(block=False)
         plt.pause(0.01)
-
-    # Functions for plotting the graphs
 
     def plot_iv(self):
         """
@@ -95,10 +95,9 @@ class plot_python_single_sweep():
 
         # Add labels and a title
         plt.ylabel('Current')
-        #plt.yscale("log")
+        # plt.yscale("log")
         plt.xlabel('Voltage')
         plt.title('Voltage vs. Current Graph')
-
 
     def plot_logiv(self):
         """
@@ -115,15 +114,15 @@ class plot_python_single_sweep():
         plt.ylabel('abs Current')
         plt.yscale("log")
         plt.xlabel('Voltage')
-        plt.title('Voltage vs. abs_Current Graph' )
+        plt.title('Voltage vs. abs_Current Graph')
         # plt.title('Voltage vs. abs_Current Graph' + \
         #           '\n' + f'{self.device_name}' + ' ' + f'{self.section_name}' + ' ' + f'{self.filename}')
 
         # Show the main_plot
-        #plt.show()
+        # plt.show()
 
     def plot_iv_avg(self, num_points=20, ax=None):
-        #plt.figure(figsize=(8, 6))
+        # plt.figure(figsize=(8, 6))
 
         # Calculate the length of the data
         data_len = len(self.v_data)
@@ -163,8 +162,8 @@ class plot_python_single_sweep():
 
         '''
 
-        text = f' ON/OFF ratio = {self.on_off_ratio} \n'\
-               f'{self.section_name,self.device_number,self.filename} \n' \
+        text = f' ON/OFF ratio = {self.on_off_ratio} \n' \
+               f'{self.section_name, self.device_number, self.filename} \n' \
                'add more information about device here,\n' \
                ' or new graph'
         # Create a subplot for information
@@ -177,7 +176,7 @@ class plot_python_single_sweep():
         # plt.text(0.5, 0.5, text, ha='center', va='center', fontsize=12)
 
         # Add the text to the subplot without a frame
-        #plt.text(0.5, 0.5, text, ha='center', va='center', fontsize=12, bbox=dict(facecolor='none', edgecolor='none'))
+        # plt.text(0.5, 0.5, text, ha='center', va='center', fontsize=12, bbox=dict(facecolor='none', edgecolor='none'))
         plt.text(0.5, 0.5, text, ha='center', va='center', fontsize=12, bbox=None)
 
         # Remove axis ticks and labels
@@ -187,8 +186,18 @@ class plot_python_single_sweep():
         # Adjust the subplot layout
         plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1)
 
+    def save_plot(self, figure_path):
+        """
+        Save the current figure to the specified file path.
 
-
+        Parameters:
+            figure_path (str): The file path where the figure should be saved.
+        """
+        if hasattr(self, 'fig') and self.fig is not None:
+            self.fig.savefig(figure_path)
+            print(f"Figure saved to {figure_path}")
+        else:
+            print("No figure to save. Please generate a figure using main_plot() first.")
 
         # # Plot some data (optional)
         # # x = [1, 2, 3, 4, 5]
@@ -210,27 +219,24 @@ class plot_python_single_sweep():
         # plt.title('Plot with Additional Text')
 
         # Show the plot
-        #plt.grid(True)
+        # plt.grid(True)
 
-    # statistics for the whole device
-    # def make_hist(self, data_in, x_label, ax):
-    #     ax.hist(data_in)
-    #     ax.set_xlabel(x_label)
-    #     ax.set_ylabel('yes_and_no_sort')
-    #     ax.grid()
-    #
-    # def plot_histograms(self):
-    #     fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(12, 8))
-    #
-    #     self.make_hist(self.resistance_on_values, 'Ron', axes[0, 0])
-    #     self.make_hist(self.resistance_off_values, 'Roff', axes[0, 1])
-    #     self.make_hist(self.voltage_off_values, 'Voff', axes[1, 0])
-    #     self.make_hist(self.voltage_on_values, 'Von', axes[1, 1])
-    #
-    #     plt.tight_layout()
-    #     plt.show()
+    def make_hist(self, data_in, x_label, ax):
+        ax.hist(data_in)
+        ax.set_xlabel(x_label)
+        ax.set_ylabel('yes_and_no_sort')
+        ax.grid()
 
+    def plot_histograms(self):
+        fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(12, 8))
 
+        self.make_hist(self.resistance_on_values, 'Ron', axes[0, 0])
+        self.make_hist(self.resistance_off_values, 'Roff', axes[0, 1])
+        self.make_hist(self.voltage_off_values, 'Voff', axes[1, 0])
+        self.make_hist(self.voltage_on_values, 'Von', axes[1, 1])
+
+        plt.tight_layout()
+        plt.show()
 
     # cpp.plot_python_single_sweep(file_info.v_data, file_info.c_data, file_info.abs_current,
     #                              file_info.current_density_ps, file_info.current_density_ng,
@@ -241,59 +247,3 @@ class plot_python_single_sweep():
     #                              file_info.voltage_on_value, file_info.voltage_off_value,
     #                              file_info.filename, section_name, device_name, device_number, full_path,
     #                              file_info.on_off_ratio)
-
-
-    #plots an iv graph with segments
-
-    # def plot_iv(self):
-    #     """
-    #         Plots voltage against current using Matplotlib.
-    #
-    #         Parameters:
-    #         - voltage_data (list): List of voltage data points.
-    #         - current_data (list): List of current data points.
-    #         """
-    #     # Calculate the length of the data
-    #     data_len = len(self.v_data)
-    #     # Determine the quarter length
-    #     quarter_len = data_len // 4
-    #
-    #     # Create a list of colors for each data point
-    #     colors = []
-    #     labels = []
-    #
-    #     for i in range(data_len):
-    #         if i < quarter_len:
-    #             colors.append('r')  # Red for the first quarter
-    #         elif i < 2 * quarter_len:
-    #             colors.append('b')  # Blue for the second quarter
-    #         elif i < 3 * quarter_len:
-    #             colors.append('g')  # Green for the third quarter
-    #         else:
-    #             colors.append('c')  # Cyan for the fourth quarter
-    #
-    #     #plt.scatter(self.v_data, self.c_data, c=colors, marker='o')
-    #     # Plot the IV curve with colored points for each quarter
-    #     plt.scatter(self.v_data[:quarter_len], self.c_data[:quarter_len], c='r', marker='o', label='Q1', s=10)
-    #     plt.scatter(self.v_data[quarter_len:2*quarter_len], self.c_data[quarter_len:2*quarter_len], c='b', marker='o', label='Q2',s=10)
-    #     plt.scatter(self.v_data[2*quarter_len:3*quarter_len], self.c_data[2*quarter_len:3*quarter_len], c='g', marker='o', label='Q3',s=10)
-    #     plt.scatter(self.v_data[3*quarter_len:], self.c_data[3*quarter_len:], c='c', marker='o', label='Q4',s=10)
-    #
-    #     plt.legend()
-    #
-    #     # Add labels and a title
-    #     plt.ylabel('Current')
-    #     plt.xlabel('Voltage')
-    #     plt.title('Voltage vs. Current Graph')
-    #
-    #     section_length = len(self.v_data) // 10
-    #     for i in range(10):
-    #         start_idx = i * section_length
-    #         end_idx = (i + 1) * section_length
-    #         plt.arrow(self.v_data[end_idx - 1], self.c_data[end_idx - 1],
-    #                   self.v_data[end_idx] - self.v_data[end_idx - 1],
-    #                   self.c_data[end_idx] - self.c_data[end_idx - 1],
-    #                   width=0.00000001, head_width=0.0000001, head_length=0.01, fc='red', ec='red')
-    #     #length_includes_head = True)
-    #     # Show the main_plot
-    #     #plt.show()

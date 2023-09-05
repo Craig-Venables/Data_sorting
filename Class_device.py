@@ -37,21 +37,26 @@ def get_file_names(directory_path):
 
 
 class Device_info():
-    ''' calculate statistics on the device
+    ''' Calculate statistics on the device
 
-    this takes all the data of the single device from each of the data sweeps and stores it in an array for use later.
+    Once called the class cycles through all the files within the device folder "eg f200\1" and calls another class
+    "Class_single_sweep" which calculates all the information from the iv sweep and passes it back too this class where
+    it is stored inside a large array for all sweeps.
 
-    device_file_path = filepath for the device folder | type: str
+    The function yes_and_no_sort can be called to curate the data.
 
-    :returns
+    Device_file_path = filepath for the device folder | type: str
+
+    :Returns
         all device information
     '''
 
     def __init__(self, device_file_path="", ) -> None:
 
         # give just filepath to the class, and it should do everything inside this class
+        # Device file path C:\to\\WS2\PVA-2%-0.1mg-ml-Gold-Gold-9\G 200µm\1
         self.directory_path = device_file_path
-        print(device_file_path)
+        print("file path to device:", device_file_path)
 
         # empty arrays for later use, these will store all the data from each of the weeps for use later
         # this is all the info gained from the device
@@ -103,25 +108,8 @@ class Device_info():
                             # self.get_file_names(self.directory_path)
 
                             # Extract folder names from the full path
-                            folder_names = os.path.dirname(self.directory_path)
-                            # extract parent folder name i.e section name
-                            parent_folder_name = os.path.basename(os.path.dirname(self.directory_path))
-                            device_number = parent_folder_name
-                            # extract grandparent folder name i.e device name
-                            grandparent_folder_name = os.path.basename(
-                                os.path.dirname(os.path.dirname(self.directory_path)))
-                            section_name = grandparent_folder_name
-                            # extract great-grandparent name ie polymer
-                            great_grandparent_folder_name = os.path.basename(
-                                os.path.dirname(os.path.dirname(os.path.dirname(self.directory_path))))
-                            device_name = great_grandparent_folder_name
-                            great_great_grandparent_folder_name = os.path.basename(os.path.dirname(
-                                os.path.dirname(os.path.dirname(os.path.dirname(self.directory_path)))))
-                            polymer_name = great_great_grandparent_folder_name
-                            great_great_great_grandparent_folder_name = os.path.basename(
-                                os.path.dirname(os.path.dirname(
-                                    os.path.dirname(os.path.dirname(os.path.dirname(self.directory_path))))))
-                            np_material_or_stock = great_great_great_grandparent_folder_name
+                            get_file_names(self.directory_path)
+                            # if there is an error here fix the fille names thing it may require them to be names
 
                             cyn.yes_no(1000, filename=filename, device_number=device_number, section_name=section_name,
                                        device_name=device_name, polymer_name=polymer_name,
@@ -146,7 +134,7 @@ class Device_info():
                 print("it broke")
                 print(f"Error processing {filename}: {e}")
 
-    def pull_info_for_folder(self, filename):
+    def pull_info_for_folder(self):
         for filename in self.file_list:
 
             if not filename.endswith(ignore_files):
